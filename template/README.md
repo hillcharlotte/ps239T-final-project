@@ -1,17 +1,18 @@
-This is a template you can use for your final project. Fill in each section with information on your own project.
-
 ## Short Description
 
-Give a short, 1-2 paragraph description of your project. Focus on the code, not the theoretical / substantive / academic side of things. 
+This project attempts to answer how the occupations of campaign donors shifted after implementation of Seattle’s voucher-based campaign finance system. 
+
+1. Are certain occupational groups (e.g. certain business interests, labor, etc.) more or less represented among the donor pool now versus in previous comparable elections? 
+
+2. Looking at the 2017 election specifically, were the occupations of voucher donors systematically different from those who contributed using their own "real" money?
+
+I answer these questions by sorting donors into occupational categories, running a series of statistical tests, and creating relevant visualizations.
 
 ## Dependencies
 
-List what software your code depends on, as well as version numbers, like so:.
+My code depends on the following software: 
 
-1. R, version 3.1
-2. Python 2.7, Anaconda distribution.
-
-(In your code itself, includes commands that install required packages.)
+1. R 3.4.0, GUI 1.70, El Capitan build
 
 ## Files
 
@@ -19,25 +20,17 @@ List all other files contained in the repo, along with a brief description of ea
 
 ### Data
 
-1. polity.csv: The PolityVI dataset, available here: http://www.systemicpeace.org/inscrdata.html
-2. nyt.csv: Contains data from the New York Times API collected via collect-nyt.ipynb . Includes information on all articles containing the term "Programmer Cat", 1980-2010.
-3. analysis-dataset.csv: The final Analysis Dataset derived from the raw data above. It includes country-year values for all UN countries 1980-2010, with observations for the following variables: 
-    - *ccode*: Correlates of War numeric code for country observation
-    - *year*: Year of observation
-    - *polity*: PolityVI score
-    - *nyt*: Number of New York Times articles about "Programmer Cat"
+1. 2017_contributors.csv: A dataset of all contributors to Seattle's 2017 election, available here: http://web6.seattle.gov/ethics/elections/lists.aspx. 
+2. 2015_contributors.csv: A dataset of all contributors to Seattle's 2015 election, available here: http://web6.seattle.gov/ethics/elections/lists.aspx. 
 
 ### Code
 
-1. 01_collect-nyt.py: Collects data from New York Times API and exports data to the file nyt.csv
-2. 02_merge-data.R: Loads, cleans, and merges the raw Polity and NYT datasets into the Analysis Dataset.
-2. 03_analysis.R: Conducts descriptive analysis of the data, producing the tables and visualizations found in the Results directory.
+1. categorize_data.R: Loads, cleans, merges, and categorizes the data for analysis.
+2. final_analysis.R: Conducts descriptive analysis of the data, producing the tables and visualizations found in the Results directory. 
 
-### Results
+### Select Results
+
+This is a select group of visualizations and tables created in the final_analysis.R code. 
 
 1. coverage-over-time.jpeg: Graphs the number of articles about each region over time.
 2. regression-table.txt: Summarizes the results of OLS regression, modelling *nyt* on a number of covariates.
-
-## More Information
-
-Include any other details you think your user might need to reproduce your results. You may also include other information such as your contact information, credits, etc.
