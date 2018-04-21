@@ -12,13 +12,13 @@ library(pacman)
 p_load(dplyr, lubridate, taRifx, ggplot2, gmodels, readr)
 
 # Set working directory
-setwd("/Users/charlottehill/Documents/PhD/Spring 2018/Seattle voucher research")
+setwd("/Users/charlottehill/Documents/code/ps239T-final-project")
 
 # Read in 2017 contributor data
-seattle2017 <- read_csv("Contributions/2017_contributors.csv")
+seattle2017 <- read_csv("Data/2017_contributors.csv")
 
 # Read in 2015 contributor data
-seattle2015 <- read_csv("Contributions/2015_contributors.csv")
+seattle2015 <- read_csv("Data/2015_contributors.csv")
 
 # Add rows of datasets together
 seattle <- rbind(seattle2017, seattle2015)
@@ -184,4 +184,4 @@ seattle$OccupationType <- name_occup_emp(empl_unemp, "Unemployed")
 seattle_occ <- subset(seattle, !is.na(OccupationType))
 
 # Save data into new file for analysis
-write.csv(seattle_occ, "final_data.csv")
+write.csv(seattle_occ, "Data/final_data.csv")
