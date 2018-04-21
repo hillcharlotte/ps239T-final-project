@@ -34,3 +34,7 @@ This is a select group of visualizations and tables created in the final_analysi
 
 1. coverage-over-time.jpeg: Graphs the number of articles about each region over time.
 2. regression-table.txt: Summarizes the results of OLS regression, modelling *nyt* on a number of covariates.
+
+### More Information
+
+For more information, contact Charlotte Hill at charlottehill@berkeley.edu
