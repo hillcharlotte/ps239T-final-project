@@ -12,10 +12,10 @@ library(pacman)
 p_load(dplyr, lubridate, taRifx, ggplot2, gmodels, readr)
 
 # Set working directory
-setwd("/Users/charlottehill/Documents/PhD/Spring 2018/Seattle voucher research")
+setwd("/Users/charlottehill/Documents/code/ps239T-final-project")
 
 # Read in final contributor data for analysis
-seattle_occ <- read_csv("final_data.csv")
+seattle_occ <- read_csv("Data/final_data.csv")
 # View(seattle_occ)
 
 ############################################### 2. SUBSET DATA ###############################################
