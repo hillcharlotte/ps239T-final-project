@@ -1,3 +1,7 @@
+# This code loads, cleans, and merges my data. It then creates occupational categories for the self-reported
+# occupations of Seattle donors. Finally, it saves the updated data file for future analysis.
+
+
 ############################################### 1. SET UP DATA ###############################################
 
 # Clear workspace
@@ -35,6 +39,7 @@ seattle$DepositDate <- mdy(seattle$DepositDate)
 # Create voucher dummy
 seattle$Voucher <- 0
 
+# Assign voucher dummy a "1" if the donor made a voucher contribution
 for (i in 1:length(seattle$VoucherID)) {
   if (seattle$VoucherID[i] != 0) {
     seattle$Voucher[i] <- 1
@@ -98,7 +103,10 @@ key_unemp <- c("unemployed", "not emp", "seeking info", "none", "disabled", "stu
 name_occtype <- function (Keywords, Occupation_Name) {
   for (i in 1:length(Keywords)) {
     seattle$OccupationType[(grepl(Keywords[i], seattle$Occupation, ignore.case = TRUE)==T) & 
-                             is.na(seattle$Occupation)==F] <- Occupation_Name
+                             is.na(seattle$Occupation)==F] <- Occupation_Name 
+    # Note: this code basically says that if one of the predesignated keywords is found within the donor's
+    # self-reported occupation and if data isn't missing, then you should assign the relevant occupation type
+    # to that donor.
   }
   return(seattle$OccupationType)
 }
@@ -151,6 +159,10 @@ name_occup_emp <- function (Employer_Name, Occupation_Name) {
   for (i in 1:length(Employer_Name)) {
     seattle$OccupationType[(grepl(Employer_Name[i], seattle$EmployerName, ignore.case = TRUE)==T) & 
                              is.na(seattle$EmployerName)==F] <- Occupation_Name
+    # Note: this code basically says that if one of the predesignated keywords is found within the donor's
+    # self-reported employer and if data isn't missing, then you should assign the relevant occupation type
+    # to that donor.
+
   }
   return(seattle$OccupationType)
 }
