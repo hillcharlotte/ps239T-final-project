@@ -1,3 +1,8 @@
+# This code takes the dataset created in 01_categorize_data.R and uses it for analysis and visualization. 
+# We find below that there are meaningful differences between the occupations of 2015 and 2017 Seattle donors
+# and additional meaingful differences between 2017 voucher and nonvoucher donors.
+
+
 ############################################### 1. SET UP DATA ###############################################
 # Clear workspace
 rm(list = ls())
@@ -25,7 +30,7 @@ seattle_occ_2017$Voucher <- as.factor(seattle_occ_2017$Voucher)
 # Reorder Occupation Type by total amount given
 seattle_occ_2017$OccupationType <- reorder(seattle_occ_2017$OccupationType, seattle_occ_2017$Amount, sum)
 
-# Do the same for 2015
+# Do the same things for the 2015 data subset:
 seattle_occ_2015 <- subset(seattle_occ, is.na(OccupationType)==FALSE & Cycle==2015)
 seattle_occ_2015$OccupationType <- as.factor(seattle_occ_2015$OccupationType)
 seattle_occ_2015$Voucher <- as.factor(seattle_occ_2015$Voucher)
@@ -33,12 +38,18 @@ seattle_occ_2015$OccupationType <- reorder(seattle_occ_2015$OccupationType, seat
 
 ############################################### 3. CREATE OCCUPATION DUMMIES ###############################################
 
-seattle_occ_2017$OtherPrivSector <- 0
+# Create a series of dummies for each occupation type
+# First, create the dummy and set it to zero.
+seattle_occ_2017$OtherPrivSector <- 0 
+
+# Use the information in the OccupationType column to determine whether the voucher should be a 0 or 1.
 for (i in 1:length(seattle_occ_2017$OtherPrivSector)) {
   if (seattle_occ_2017$OccupationType[i]=="Other Private-Sector") {
     seattle_occ_2017$OtherPrivSector[i] <- 1
   }
 }
+
+# Repeat the above steps for each of the dummy variables:
 
 seattle_occ_2017$Retired <- 0
 for (i in 1:length(seattle_occ_2017$Retired)) {
@@ -110,6 +121,8 @@ for (i in 1:length(seattle_occ_2017$Finance)) {
   }
 }
 
+# We now have dummy variables for every occupation!
+
 ############################################### 4. RUN CALCULATIONS & STATISTICAL TESTS ###############################################
 
 # Identify average amounts given in 2015 and 2017:
@@ -125,49 +138,55 @@ CrossTable(seattle_occ_2017$OccupationType, seattle_occ_2017$Voucher, prop.t = F
 # Run regression model, with voucher usage as dependent variable and occupation dummies as independent variables:  
 seattle_occ_2017$Voucher <- as.numeric(seattle_occ_2017$Voucher)
 reg_dummies <- lm(Voucher~OtherPrivSector + Retired + Labor + Service + Government + Technology + Health + RealEstate + Unemployed + Finance, seattle_occ_2017)
+
+#View the results of the regression model
 summary(reg_dummies)
 
 ############################################### 5. PLOT 2015 DATA ###############################################
 
 # Plot 2015 donation dollars by occupation type:
-    # Reorder Occupation Type by total amount given
+
+    # First, reorder Occupation Type by total amount given
     seattle_occ_2015$OccupationType <- reorder(seattle_occ_2015$OccupationType, seattle_occ_2015$Amount, sum)
 
-plot_amount_by_occupation_2015 <- ggplot(seattle_occ_2015, aes(x = OccupationType, y = Amount, fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) +
-  geom_bar(stat = "identity") +
-  scale_fill_discrete(name = "Contribution Type") +
-  labs(title = "2015 Non-Voucher Dollars Contributed by Occupation Type",
-       x = "Occupation Type", y = "Total Dollars Contributed") +
-  scale_y_continuous(labels = scales::comma, limits = c(0, 200000)) +
-  theme_minimal() +
-  coord_flip()
-plot_amount_by_occupation_2015
+    # Create the plot: 
+    plot_amount_by_occupation_2015 <- ggplot(seattle_occ_2015, aes(x = OccupationType, y = Amount, fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) +
+      geom_bar(stat = "identity") +
+      scale_fill_discrete(name = "Contribution Type") + # label the legend
+      labs(title = "2015 Non-Voucher Dollars Contributed by Occupation Type", # label the axes
+           x = "Occupation Type", y = "Total Dollars Contributed") +
+      scale_y_continuous(labels = scales::comma, limits = c(0, 200000)) + # Create a common scale so we can compare this plot to a similar one for 2017
+      theme_minimal() + # assign theme
+      coord_flip() # flip coordinates
+
+    # View the plot:
+    plot_amount_by_occupation_2015
 
 # Plot 2015 number of donations by occupation type:
     # Reorder Occupation Type by # of contributions given, using Cycle because it's a standard number for each observation:
     seattle_occ_2015$OccupationType <- reorder(seattle_occ_2015$OccupationType, seattle_occ_2015$Cycle, sum)
 
-plot_donations_by_occupation_2015 <- ggplot(seattle_occ_2015, aes(OccupationType, fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) + 
-  geom_bar() +
-  scale_fill_discrete(name = "Contribution Type") +
-  labs(title = "2015 Voucher vs. Non-Voucher Contributions by Occupation Type",
-       x = "Occupation Type", y = "Number of Contributions") +
-  theme_minimal() + 
-  coord_flip()
-plot_donations_by_occupation_2015
+    plot_donations_by_occupation_2015 <- ggplot(seattle_occ_2015, aes(OccupationType, fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) + 
+      geom_bar() +
+      scale_fill_discrete(name = "Contribution Type") + # label the legend
+      labs(title = "2015 Voucher vs. Non-Voucher Contributions by Occupation Type", 
+           x = "Occupation Type", y = "Number of Contributions") + #label the axes
+      theme_minimal() + # assign theme
+      coord_flip() # flip coordinates
+    plot_donations_by_occupation_2015
 
 # Plot percentage of donations by occupation type in 2015:
     # Reorder data (using Cycle because it's the same value for each observation)
     seattle_occ_2015$OccupationType <- reorder(seattle_occ_2015$OccupationType, as.numeric(seattle_occ_2015$Cycle), sum)
 
-ggplot(seattle_occ_2015, aes(OccupationType, fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) + 
-  geom_bar(aes(y = (..count..)/sum(..count..)), position = "stack") +
-  scale_y_continuous(labels = scales::percent) +
-  scale_fill_discrete(name = "Contribution Type") +
-  labs(title = "2015 Voucher vs. Non-Voucher Contributions by Occupation Type",
-       x = "Occupation Type", y = "Percentage of Contributions") +
-  theme_minimal() +
-  coord_flip()
+    ggplot(seattle_occ_2015, aes(OccupationType, fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) + 
+      geom_bar(aes(y = (..count..)/sum(..count..)), position = "stack") + # change from count to proportion
+      scale_y_continuous(labels = scales::percent) + # convert from proportion to percent
+      scale_fill_discrete(name = "Contribution Type") + # label legend
+      labs(title = "2015 Voucher vs. Non-Voucher Contributions by Occupation Type", # label axes
+           x = "Occupation Type", y = "Percentage of Contributions") +
+      theme_minimal() + #assign theme
+      coord_flip() # flip coordinates
 
 ############################################### 6. PLOT 2017 DATA ###############################################
 
@@ -179,120 +198,134 @@ seattle_occ_2017$Voucher <- as.factor(seattle_occ_2017$Voucher)
     # Reorder Occupation Type by total amount given
     seattle_occ_2017$OccupationType <- reorder(seattle_occ_2017$OccupationType, seattle_occ_2017$Amount, sum)
     
-plot_amount_by_occupation_2017 <- ggplot(seattle_occ_2017, aes(x = OccupationType, y = Amount, fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) +  
-  geom_bar(stat = "identity", position = "stack") +
-  scale_fill_discrete(name = "Contribution Type") +
-  labs(title = "2017 Voucher vs. Non-Voucher Dollars Contributed by Occupation Type",
-       x = "Occupation Type", y = "Total Dollars Contributed") +
-  scale_y_continuous(labels = scales::comma, limits = c(0, 200000)) +
-  theme_minimal() +
-  coord_flip()
-plot_amount_by_occupation_2017
+    plot_amount_by_occupation_2017 <- ggplot(seattle_occ_2017, aes(x = OccupationType, y = Amount, fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) +  
+      geom_bar(stat = "identity", position = "stack") +
+      scale_fill_discrete(name = "Contribution Type") + # label legend
+      labs(title = "2017 Voucher vs. Non-Voucher Dollars Contributed by Occupation Type", # label axes
+           x = "Occupation Type", y = "Total Dollars Contributed") +
+      scale_y_continuous(labels = scales::comma, limits = c(0, 200000)) + # create common scale so we can compare to 2015 plot
+      theme_minimal() + # assign theme
+      coord_flip() # flip coordinates
+    plot_amount_by_occupation_2017
 
 # Plot 2017 number of donations by occupation type:
     # Reorder Occupation Type by number of donations given (using Cycle because it's the same number for each observation):
     seattle_occ_2017$OccupationType <- reorder(seattle_occ_2017$OccupationType, seattle_occ_2017$Cycle, sum)
 
-plot_donations_by_occupation_2017 <- ggplot(seattle_occ_2017, aes(OccupationType, fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) + 
-  geom_bar() +
-  scale_fill_discrete(name = "Contribution Type") +
-  labs(title = "2017 Voucher vs. Non-Voucher Contributions by Occupation Type",
-       x = "Occupation Type", y = "Number of Contributions") +
-  theme_minimal() + 
-  coord_flip()
-plot_donations_by_occupation_2017
+    plot_donations_by_occupation_2017 <- ggplot(seattle_occ_2017, aes(OccupationType, fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) + 
+      geom_bar() +
+      scale_fill_discrete(name = "Contribution Type") + # label legend
+      labs(title = "2017 Voucher vs. Non-Voucher Contributions by Occupation Type", # label axes
+           x = "Occupation Type", y = "Number of Contributions") +
+      theme_minimal() + # assign theme
+      coord_flip() # flip coordinates
+    plot_donations_by_occupation_2017
 
 # Plot percentage of donations by occupation type in 2017:
     # Reorder data (using Cycle because it's the same value for each observation)
     seattle_occ_2017$OccupationType <- reorder(seattle_occ_2017$OccupationType, as.numeric(seattle_occ_2017$Cycle), sum)
 
-ggplot(seattle_occ_2017, aes(OccupationType, fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) + 
-  geom_bar(aes(y = (..count..)/sum(..count..)), position = "stack") +
-  scale_y_continuous(labels = scales::percent) +
-  scale_fill_discrete(name = "Contribution Type") +
-  labs(title = "2017 Voucher vs. Non-Voucher Contributions by Occupation Type",
-       x = "Occupation Type", y = "Percentage of Contributions") +
-  theme_minimal() +
-  coord_flip()
+    ggplot(seattle_occ_2017, aes(OccupationType, fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) + 
+      geom_bar(aes(y = (..count..)/sum(..count..)), position = "stack") + # change from count to proportion
+      scale_y_continuous(labels = scales::percent) + # convert from proportion to percent
+      scale_fill_discrete(name = "Contribution Type") + # label legend
+      labs(title = "2017 Voucher vs. Non-Voucher Contributions by Occupation Type", # label axes
+           x = "Occupation Type", y = "Percentage of Contributions") +
+      theme_minimal() + # assign theme
+      coord_flip() # flip coordinates
 
 # Create subcategories for voucher and non-voucher contributions in 2017
 seattle_occ_2017_vouch <- subset(seattle_occ_2017, Voucher==1)
 seattle_occ_2017_cash <- subset(seattle_occ_2017, Voucher==0)
 
 # Plot voucher dollars by occupation type:
-seattle_occ_2017_vouch$OccupationType <- reorder(seattle_occ_2017_vouch$OccupationType, seattle_occ_2017_vouch$Amount, sum)
-ggplot(seattle_occ_2017_vouch, aes(OccupationType, Amount, fill = factor(Voucher, levels = c(1), labels = c("Voucher")))) +
-  geom_bar(stat = "identity") +
-  scale_fill_discrete(name = "Contribution Type") +
-  labs(title = "Voucher Dollars Contributed by Occupation Type",
-       x = "Occupation Type", y = "Total Dollars Contributed") +
-  theme_minimal() +
-  coord_flip()
+
+    # Reorder OccupationType by total dollars donated
+    seattle_occ_2017_vouch$OccupationType <- reorder(seattle_occ_2017_vouch$OccupationType, seattle_occ_2017_vouch$Amount, sum) 
+  
+    ggplot(seattle_occ_2017_vouch, aes(OccupationType, Amount, fill = factor(Voucher, levels = c(1), labels = c("Voucher")))) +
+      geom_bar(stat = "identity") +
+      scale_fill_discrete(name = "Contribution Type") + # label legend
+      labs(title = "Voucher Dollars Contributed by Occupation Type", # label axes
+           x = "Occupation Type", y = "Total Dollars Contributed") +
+      theme_minimal() + # assign theme
+      coord_flip() # flip coordinates
 
 # Plot non-voucher dollars by occupation type: 
-seattle_occ_2017_cash$OccupationType <- reorder(seattle_occ_2017_cash$OccupationType, seattle_occ_2017_cash$Amount, sum)
-ggplot(seattle_occ_2017_cash, aes(OccupationType, Amount, fill = factor(Voucher, levels = c(0), labels = c("Non-Voucher")))) +
-  geom_bar(stat = "identity") +
-  scale_fill_discrete(name = "Contribution Type") +
-  labs(title = "Non-Voucher Dollars Contributed by Occupation Type",
-       x = "Occupation Type", y = "Total Dollars Contributed") +
-  theme_minimal() +
-  coord_flip()
+
+    # Reorder OccupationType by total dollars donated
+    seattle_occ_2017_cash$OccupationType <- reorder(seattle_occ_2017_cash$OccupationType, seattle_occ_2017_cash$Amount, sum)
+    
+    ggplot(seattle_occ_2017_cash, aes(OccupationType, Amount, fill = factor(Voucher, levels = c(0), labels = c("Non-Voucher")))) +
+      geom_bar(stat = "identity") +
+      scale_fill_discrete(name = "Contribution Type") + # label legend
+      labs(title = "Non-Voucher Dollars Contributed by Occupation Type", # label axes
+           x = "Occupation Type", y = "Total Dollars Contributed") +
+      theme_minimal() + # assign theme
+      coord_flip() # flip coordinates
 
 # Plot number of voucher contributions by occupation type
-seattle_occ_2017_vouch$val <- 1
-seattle_occ_2017_vouch$OccupationType <- reorder(seattle_occ_2017_vouch$OccupationType, seattle_occ_2017_vouch$val, sum)
-ggplot(seattle_occ_2017_vouch, aes(x = OccupationType, fill = factor(Voucher, levels = c(1), labels = c("Voucher")))) +
-  geom_histogram(stat = "count") +
-  scale_fill_discrete(name = "Contribution Type") +
-  labs(title = "Voucher Contributions by Occupation Type",
-       x = "Occupation Type", y = "Number of Contributions") +
-  theme_minimal() +
-  coord_flip()
+    # Create column of 1s so we can sum up total number of contributions 
+    seattle_occ_2017_vouch$val <- 1
+
+    # Reorder Occupation Type by total number of contributions
+    seattle_occ_2017_vouch$OccupationType <- reorder(seattle_occ_2017_vouch$OccupationType, seattle_occ_2017_vouch$val, sum)
+
+    ggplot(seattle_occ_2017_vouch, aes(x = OccupationType, fill = factor(Voucher, levels = c(1), labels = c("Voucher")))) +
+      geom_histogram(stat = "count") +
+      scale_fill_discrete(name = "Contribution Type") + # label legend
+      labs(title = "Voucher Contributions by Occupation Type", # label axes
+           x = "Occupation Type", y = "Number of Contributions") +
+      theme_minimal() + # assign theme
+      coord_flip() # flip coordinates
 
 # Plot number of non-voucher contributions by occupation type
-seattle_occ_2017_cash$val <- 1
-seattle_occ_2017_cash$OccupationType <- reorder(seattle_occ_2017_cash$OccupationType, seattle_occ_2017_cash$val, sum)
-ggplot(seattle_occ_2017_cash, aes(x = OccupationType, fill = factor(Voucher, levels = c(0), labels = c("Non-Voucher")))) +
-  geom_histogram(stat = "count") +
-  scale_fill_discrete(name = "Contribution Type") +
-  labs(title = "Non-Voucher Contributions by Occupation Type",
-       x = "Occupation Type", y = "Number of Contributions") +
-  theme_minimal() +
-  coord_flip()
+    # Create column of 1s so we can sum up total number of contributions 
+    seattle_occ_2017_cash$val <- 1
+    
+    # Reorder Occupation Type by total number of contributions
+    seattle_occ_2017_cash$OccupationType <- reorder(seattle_occ_2017_cash$OccupationType, seattle_occ_2017_cash$val, sum)
+    
+    ggplot(seattle_occ_2017_cash, aes(x = OccupationType, fill = factor(Voucher, levels = c(0), labels = c("Non-Voucher")))) +
+      geom_histogram(stat = "count") +
+      scale_fill_discrete(name = "Contribution Type") + # label legend
+      labs(title = "Non-Voucher Contributions by Occupation Type", # label axes
+           x = "Occupation Type", y = "Number of Contributions") +
+      theme_minimal() + # assign theme
+      coord_flip() # flip coordinates
 
 ############################################### 7. PLOT COMPARISONS OF 2015 & 2017 ###############################################
 
-# Set up data
+# Set up data by turning Occupation Type, Cycle, and Voucher into factors
 seattle_occ$OccupationType <- as.factor(seattle_occ$OccupationType)
 seattle_occ$Cycle <- as.factor(seattle_occ$Cycle)
 seattle_occ$Voucher <- as.factor(seattle_occ$Voucher)
 
 # Plot contributor occupations by election cycle
-ggplot(data = seattle_occ, aes(x = OccupationType, fill = Cycle)) + 
-  geom_bar(position = "dodge") +
-  scale_fill_discrete(name = "Cycle") +
-  labs(title = "Contributor Occupations By Election Cycle", subtitle = "2015 vs. 2017",
-       x = "Occupation", y = "Number of Contributions") +
-  scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 8)) +
-  theme_minimal()
+    ggplot(data = seattle_occ, aes(x = OccupationType, fill = Cycle)) + 
+      geom_bar(position = "dodge") +
+      scale_fill_discrete(name = "Cycle") +
+      labs(title = "Contributor Occupations By Election Cycle", subtitle = "2015 vs. 2017",
+           x = "Occupation", y = "Number of Contributions") +
+      scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 8)) +
+      theme_minimal()
 
 # Plot number of voucher vs. non-voucher contributions by occupation type and cycle
-ggplot(data = seattle_occ, aes(x = Cycle, 
-                               fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) + 
-  geom_bar(stat = "count", position = "stack") +
-  facet_wrap( ~ OccupationType) +
-  scale_fill_discrete(name = "Contribution Type") +
-  labs(title = "Number of Voucher vs. Non-Voucher Contributions by Occupation Type", subtitle = "2015 vs. 2017",
-       x = "Election Cycle", y = "Number of Contributions") +
-  theme_minimal()
+    ggplot(data = seattle_occ, aes(x = Cycle, 
+                                   fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) + 
+      geom_bar(stat = "count", position = "stack") +
+      facet_wrap( ~ OccupationType) +
+      scale_fill_discrete(name = "Contribution Type") +
+      labs(title = "Number of Voucher vs. Non-Voucher Contributions by Occupation Type", subtitle = "2015 vs. 2017",
+           x = "Election Cycle", y = "Number of Contributions") +
+      theme_minimal()
 
 # Plot total voucher vs. non-voucher dollars contributed by occupation type
-ggplot(data = seattle_occ, aes(x = Cycle, y = Amount, 
-                               fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) + 
-  geom_bar(stat = "identity", position = "stack") +
-  facet_wrap( ~ OccupationType) +
-  scale_fill_discrete(name = "Contribution Type") +
-  labs(title = "Total Voucher vs. Non-Voucher Dollars Contributed by Occupation Type", subtitle = "2015 vs. 2017",
-       x = "Election Cycle", y = "Total Dollars Contributed") +
-  theme_minimal()
+    ggplot(data = seattle_occ, aes(x = Cycle, y = Amount, 
+                                   fill = factor(Voucher, levels = c(1, 0), labels = c("Voucher", "Non-Voucher")))) + 
+      geom_bar(stat = "identity", position = "stack") +
+      facet_wrap( ~ OccupationType) +
+      scale_fill_discrete(name = "Contribution Type") +
+      labs(title = "Total Voucher vs. Non-Voucher Dollars Contributed by Occupation Type", subtitle = "2015 vs. 2017",
+           x = "Election Cycle", y = "Total Dollars Contributed") +
+      theme_minimal()
