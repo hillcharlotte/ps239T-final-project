@@ -1,0 +1,31 @@
+Regression results:
+(Note: reference category is "lawyers," because that was the most common occupation among donors in the 2015 election.)
+
+Call:
+lm(formula = Voucher ~ OtherPrivSector + Retired + Labor + Service + 
+    Government + Technology + Health + RealEstate + Unemployed + 
+    Finance, data = seattle_occ_2017)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.6471 -0.3277 -0.3147  0.6138  0.7874 
+
+Coefficients:
+                Estimate Std. Error t value Pr(>|t|)    
+(Intercept)      1.24290    0.02620  47.431  < 2e-16 ***
+OtherPrivSector  0.07420    0.03145   2.359 0.018385 *  
+Retired          0.07183    0.03424   2.098 0.036018 *  
+Labor            0.14334    0.04288   3.343 0.000839 ***
+Service          0.17515    0.03469   5.048 4.73e-07 ***
+Government       0.09276    0.03805   2.438 0.014830 *  
+Technology       0.08478    0.04378   1.937 0.052884 .  
+Health           0.11764    0.04656   2.527 0.011559 *  
+RealEstate      -0.03030    0.04900  -0.618 0.536298    
+Unemployed       0.40416    0.06235   6.482 1.06e-10 ***
+Finance         -0.01710    0.06479  -0.264 0.791898    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.4666 on 2950 degrees of freedom
+Multiple R-squared:  0.02411,	Adjusted R-squared:  0.0208 
+F-statistic: 7.288 on 10 and 2950 DF,  p-value: 1.745e-11
