@@ -30,10 +30,18 @@ List all other files contained in the repo, along with a brief description of ea
 
 ### Select Results
 
-This is a select group of visualizations and tables created in the final_analysis.R code. 
+This is a group of visualizations and tables created with the final_analysis.R code. Additional visualizations and tables can be found within the final_analysis.R file.
 
-1. coverage-over-time.jpeg: Graphs the number of articles about each region over time.
-2. regression-table.txt: Summarizes the results of OLS regression, modelling *nyt* on a number of covariates.
+1. crosstabs-occupation-voucher.png: Crosstabs showing the relationship between occupation types and contribution types in the 2017 election. Each occupation type is broken down further into nonvoucher contributions (0) and voucher contributions (1).
+2. regression-results: Summarizes the results of an OLS regression, with voucher usage as the dependent variable and occupation dummies as the independent variables. The reference category is "lawyers," the most common occupational category during the 2015 election (pre-voucher implementation). The regression shows that certain occupations are statistically more likely than lawyers to give vouchers (as compared to non-voucher contributions).
+3. PS239T Presentation.pdf: A longer version of the presentation I gave on my results in PS239T.
+4. 2015/2015-nonvoucher-contributions-by-occupation-percent.jpeg: Plot of percent of 2015 (nonvoucher) contributions by occupation.
+5. 2015/2015-nonvoucher-contributions-by-occupation.jpeg: Plot of number of 2015 (nonvoucher) contributions by occupation.
+6. 2015/2015-nonvoucher-dollars-by-occupation.jpeg: Plot of number of 2015 (nonvoucher) dollars contributed by occupation.
+7. 2017/2017-voucher-nonvoucher-contributions-by-occupation-percent.jpeg: Plot of percent of 2017 voucher vs. nonvoucher contributions by occupation.
+8. 2017/2017-voucher-nonvoucher-contributions-by-occupation.jpeg: Plot of number of 2017 voucher vs. nonvoucher contributions by occupation.
+9. 2017/2017-voucher-nonvoucher-dollars-by-occupation.jpeg: Plot of number of 2017 voucher vs. nonvoucher dollars contributed by occupation.
+10. 
 
 ### More Information
 
