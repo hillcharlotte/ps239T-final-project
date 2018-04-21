@@ -41,7 +41,9 @@ This is a group of visualizations and tables created with the final_analysis.R c
 7. 2017/2017-voucher-nonvoucher-contributions-by-occupation-percent.jpeg: Plot of percent of 2017 voucher vs. nonvoucher contributions by occupation.
 8. 2017/2017-voucher-nonvoucher-contributions-by-occupation.jpeg: Plot of number of 2017 voucher vs. nonvoucher contributions by occupation.
 9. 2017/2017-voucher-nonvoucher-dollars-by-occupation.jpeg: Plot of number of 2017 voucher vs. nonvoucher dollars contributed by occupation.
-10. 
+10. 2015_2017_Comparison/contributor_occupations_by_cycle.jpeg: Chart of contributor occupations in 2015 vs. 2017.
+11. 2015_2017_Comparison/voucher_nonvoucher_contributions_by_occupation_cycle.jpeg: Plot of voucher vs. nonvoucher contributions by occupation in 2015 vs. 2017.
+12. 2015_2017_Comparison/voucher_nonvoucher_dollars_by_occupation_cycle.jpeg: Plot of voucher vs. nonvoucher dollars contributed by occupation in 2015 vs. 2017.
 
 ### More Information
 
