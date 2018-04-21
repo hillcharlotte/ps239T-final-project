@@ -25,8 +25,8 @@ List all other files contained in the repo, along with a brief description of ea
 
 ### Code
 
-1. categorize_data.R: Loads, cleans, merges, and categorizes the data for analysis.
-2. final_analysis.R: Conducts descriptive analysis of the data, producing the tables and visualizations found in the Results directory. 
+1. 01_categorize_data.R: Loads, cleans, merges, and categorizes the data for analysis.
+2. 02_final_analysis.R: Conducts descriptive analysis of the data, producing the tables and visualizations found in the Results directory. 
 
 ### Select Results
 
